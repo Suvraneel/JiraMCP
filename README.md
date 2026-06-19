@@ -1,6 +1,6 @@
 # Jira MCP Server
 
-A production-ready **Model Context Protocol (MCP)** server that integrates with **Jira Cloud** and exposes tools usable by **GitHub Copilot Chat**, **JetBrains AI Assistant**, and any other MCP-compatible client.
+A production-ready **Model Context Protocol (MCP)** server that integrates with **Jira Cloud** and exposes tools usable by **GitHub Copilot Chat**, **Claude**, **Cursor**, **Kiro**, **JetBrains AI Assistant**, and other MCP-compatible clients.
 
 ---
 
@@ -133,73 +133,25 @@ You **don't** interact with it directly in a terminal. Instead, you configure yo
 
 ---
 
-## 5 — IDE Configuration
+## 5 — Client Configuration
 
-### Option A: VS Code (GitHub Copilot Chat)
+Detailed `mcp.json` instructions are split into per-client guides (each includes Windows/macOS/Linux paths where applicable):
 
-Create or update **`.vscode/mcp.json`** in your project root:
+- GitHub Copilot (VS Code + JetBrains): `docs/mcp/github-copilot.md`
+- Claude Desktop: `docs/mcp/claude.md`
+- Claude Code (CLI): `docs/mcp/claude-code.md`
+- Cursor (Desktop/UI): `docs/mcp/cursor.md`
+- Cursor CLI: `docs/mcp/cursor-cli.md`
+- Kiro (Desktop/UI): `docs/mcp/kiro.md`
+- Kiro CLI: `docs/mcp/kiro-cli.md`
+- Other MCP-capable clients (compatibility notes): `docs/mcp/other-clients.md`
 
-```jsonc
-{
-  "servers": {
-    "jira": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["/absolute/path/to/JiraMCP/dist/server.js"],
-      "env": {
-        "JIRA_BASE_URL": "https://your-domain.atlassian.net",
-        "JIRA_EMAIL": "your-email@example.com",
-        "JIRA_API_TOKEN": "your-api-token-here"
-      }
-    }
-  }
-}
-```
+Quick reminder for all clients:
 
-> 💡 If the MCP config lives inside the JiraMCP project itself, you can use a relative path:
-> `"args": ["dist/server.js"]` with `"cwd": "${workspaceFolder}"`.
-
-After saving, open **Copilot Chat** — the Jira tools should appear in the tool list.
-
-### Option B: JetBrains IDEs (IntelliJ IDEA, WebStorm, etc.)
-
-**Method 1 — Global Copilot MCP config** (recommended)
-
-Edit the file at:
-- **Windows:** `%LOCALAPPDATA%\github-copilot\intellij\mcp.json`
-- **macOS:** `~/Library/Application Support/github-copilot/intellij/mcp.json`
-- **Linux:** `~/.config/github-copilot/intellij/mcp.json`
-
-```jsonc
-{
-  "servers": {
-    "jira": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["/absolute/path/to/JiraMCP/dist/server.js"],
-      "env": {
-        "JIRA_BASE_URL": "https://your-domain.atlassian.net",
-        "JIRA_EMAIL": "your-email@example.com",
-        "JIRA_API_TOKEN": "your-api-token-here"
-      }
-    }
-  }
-}
-```
-
-**Method 2 — JetBrains AI Assistant UI**
-
-Go to **Settings → Tools → AI Assistant → Model Context Protocol (MCP)** and add:
-
-| Field | Value |
-|---|---|
-| Name | `jira` |
-| Transport | `stdio` |
-| Command | `node` |
-| Arguments | `/absolute/path/to/JiraMCP/dist/server.js` |
-| Environment Variables | `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN` |
-
-> ⚠️ **Always use absolute paths** in IntelliJ MCP configs. Relative paths do not resolve reliably.
+- Use `node` as the command.
+- Point args to an absolute path for `dist/server.js`.
+- Provide `JIRA_BASE_URL`, `JIRA_EMAIL`, and `JIRA_API_TOKEN` in environment variables.
+- Restart the client after changing MCP config.
 
 ---
 
@@ -239,6 +191,16 @@ This script exercises all 15 tools against your configured Jira instance and pri
 
 ```
 JiraMCP/
+├── docs/
+│   └── mcp/
+│       ├── github-copilot.md  # VS Code + JetBrains MCP config
+│       ├── claude.md          # Claude Desktop MCP config
+│       ├── claude-code.md     # Claude Code (CLI) MCP config
+│       ├── cursor.md          # Cursor desktop MCP config
+│       ├── cursor-cli.md      # Cursor CLI MCP config
+│       ├── kiro.md            # Kiro desktop MCP config
+│       ├── kiro-cli.md        # Kiro CLI MCP config
+│       └── other-clients.md   # Compatibility notes for additional MCP clients
 ├── src/
 │   ├── server.ts              # MCP server setup & tool registration
 │   ├── jiraClient.ts          # Jira REST API v3 wrapper (cache, retry, rate-limit)
